@@ -81,7 +81,7 @@ const AddUserPage: React.FC<AddUserPageProps> = ({ addUser, darkMode, navigateTo
           <div className="flex gap-4">
             <button
               onClick={handleSubmit}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:opacity-90 transition-opacity font-medium shadow-lg"
+              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:opacity-90 transition-opacity font-medium shadow-lg"
             >
               Add User
             </button>
