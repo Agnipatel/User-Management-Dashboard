@@ -1,7 +1,23 @@
 import React from 'react';
 import { Mail, Phone, Building } from 'lucide-react';
 
-const UserCard = ({ user, darkMode, onClick }) => (
+// Define the user type
+interface User {
+  name: string;
+  email: string;
+  phone: string;
+  company?: { name: string } | string;
+  isLocal?: boolean;
+}
+
+// Define the props type
+interface UserCardProps {
+  user: User;
+  darkMode: boolean;
+  onClick: () => void;
+}
+
+const UserCard: React.FC<UserCardProps> = ({ user, darkMode, onClick }) => (
   <div
     onClick={onClick}
     className={`${
@@ -14,13 +30,19 @@ const UserCard = ({ user, darkMode, onClick }) => (
       <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
         {user.name.charAt(0)}
       </div>
-      {user.isLocal && <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">New</span>}
+      {user.isLocal && (
+        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">New</span>
+      )}
     </div>
-    <h3 className={`text-xl font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user.name}</h3>
+    <h3 className={`text-xl font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+      {user.name}
+    </h3>
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-sm">
         <Mail size={16} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
-        <span className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} truncate`}>{user.email}</span>
+        <span className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} truncate`}>
+          {user.email}
+        </span>
       </div>
       <div className="flex items-center gap-2 text-sm">
         <Phone size={16} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
@@ -29,7 +51,7 @@ const UserCard = ({ user, darkMode, onClick }) => (
       <div className="flex items-center gap-2 text-sm">
         <Building size={16} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
         <span className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} truncate`}>
-          {user.company?.name || user.company}
+          {typeof user.company === 'string' ? user.company : user.company?.name}
         </span>
       </div>
     </div>

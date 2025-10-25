@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
-const AddUserPage = ({ addUser, darkMode, navigateTo }) => {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', company: '' });
-  const [errors, setErrors] = useState({});
+// Define the User type
+interface User {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+}
+
+// Props type for AddUserPage
+interface AddUserPageProps {
+  addUser: (user: User) => void;
+  darkMode: boolean;
+  navigateTo: (page: string) => void;
+}
+
+const AddUserPage: React.FC<AddUserPageProps> = ({ addUser, darkMode, navigateTo }) => {
+  const [formData, setFormData] = useState<User>({ name: '', email: '', phone: '', company: '' });
+  const [errors, setErrors] = useState<Partial<Record<keyof User, string>>>({});
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Partial<Record<keyof User, string>> = {};
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
     if (!formData.phone.trim()) newErrors.phone = 'Phone is required';
     if (!formData.company.trim()) newErrors.company = 'Company is required';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -20,7 +36,7 @@ const AddUserPage = ({ addUser, darkMode, navigateTo }) => {
     if (validateForm()) addUser(formData);
   };
 
-  const handleChange = (field, value) => {
+  const handleChange = (field: keyof User, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
   };
@@ -29,7 +45,9 @@ const AddUserPage = ({ addUser, darkMode, navigateTo }) => {
     <div>
       <button
         onClick={() => navigateTo('home')}
-        className={`mb-6 flex items-center gap-2 ${darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}
+        className={`mb-6 flex items-center gap-2 ${
+          darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+        } transition-colors`}
       >
         <ArrowLeft size={20} /> Back to Users
       </button>
@@ -38,7 +56,7 @@ const AddUserPage = ({ addUser, darkMode, navigateTo }) => {
         <h2 className={`text-3xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Add New User</h2>
 
         <div className="space-y-6">
-          {['name', 'email', 'phone', 'company'].map((field) => (
+          {(['name', 'email', 'phone', 'company'] as (keyof User)[]).map((field) => (
             <div key={field}>
               <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 {field.charAt(0).toUpperCase() + field.slice(1)} *

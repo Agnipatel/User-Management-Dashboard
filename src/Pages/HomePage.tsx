@@ -1,7 +1,27 @@
 import React from 'react';
 import { Search, User, Mail, Phone, Building, Plus } from 'lucide-react';
 
-const HomePage = ({ users, loading, searchTerm, setSearchTerm, darkMode, navigateTo }) => {
+// User type
+interface UserType {
+  id: string | number;
+  name: string;
+  email: string;
+  phone: string;
+  company?: { name: string } | string;
+  isLocal?: boolean;
+}
+
+// Props type for HomePage
+interface HomePageProps {
+  users: UserType[];
+  loading: boolean;
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  darkMode: boolean;
+  navigateTo: (page: string, id?: string | number) => void;
+}
+
+const HomePage: React.FC<HomePageProps> = ({ users, loading, searchTerm, setSearchTerm, darkMode, navigateTo }) => {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -28,15 +48,20 @@ const HomePage = ({ users, loading, searchTerm, setSearchTerm, darkMode, navigat
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className={`w-full pl-12 pr-4 py-3 rounded-lg border ${
-            darkMode ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+            darkMode
+              ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
+              : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
           } focus:outline-none focus:ring-2 focus:ring-blue-500`}
         />
       </div>
 
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-6 shadow-md animate-pulse`}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-6 shadow-md animate-pulse`}
+            >
               <div className={`h-12 w-12 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full mb-4`}></div>
               <div className={`h-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded mb-2`}></div>
               <div className={`h-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded mb-2`}></div>
@@ -55,7 +80,7 @@ const HomePage = ({ users, loading, searchTerm, setSearchTerm, darkMode, navigat
 
       {!loading && users.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.map(user => (
+          {users.map((user) => (
             <div
               key={user.id}
               onClick={() => navigateTo('details', user.id)}
@@ -67,7 +92,9 @@ const HomePage = ({ users, loading, searchTerm, setSearchTerm, darkMode, navigat
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
                   {user.name.charAt(0)}
                 </div>
-                {user.isLocal && <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">New</span>}
+                {user.isLocal && (
+                  <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">New</span>
+                )}
               </div>
               <h3 className={`text-xl font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user.name}</h3>
               <div className="space-y-2">
@@ -82,7 +109,7 @@ const HomePage = ({ users, loading, searchTerm, setSearchTerm, darkMode, navigat
                 <div className="flex items-center gap-2 text-sm">
                   <Building size={16} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
                   <span className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} truncate`}>
-                    {user.company?.name || user.company}
+                    {typeof user.company === 'string' ? user.company : user.company?.name}
                   </span>
                 </div>
               </div>

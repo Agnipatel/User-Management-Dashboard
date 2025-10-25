@@ -1,8 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Mail, Building } from 'lucide-react';
 
-const UserDetailsPage = ({ userId, users, darkMode, navigateTo }) => {
-  const [user, setUser] = useState(null);
+// Types
+interface Company {
+  name: string;
+  catchPhrase?: string;
+  bs?: string;
+}
+
+interface Address {
+  street: string;
+  suite: string;
+  city: string;
+  zipcode: string;
+}
+
+export interface UserType {
+  id: string | number;
+  name: string;
+  username?: string;
+  email: string;
+  phone: string;
+  website?: string;
+  company?: Company | string;
+  address?: Address;
+  isLocal?: boolean;
+}
+
+interface UserDetailsPageProps {
+  userId: string | number;
+  users: UserType[];
+  darkMode: boolean;
+  navigateTo: (page: string, id?: string | number) => void;
+}
+
+const UserDetailsPage: React.FC<UserDetailsPageProps> = ({ userId, users, darkMode, navigateTo }) => {
+  const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,13 +46,13 @@ const UserDetailsPage = ({ userId, users, darkMode, navigateTo }) => {
     } else {
       fetchUserDetails();
     }
-  }, [userId]);
+  }, [userId, users]);
 
   const fetchUserDetails = async () => {
     try {
       setLoading(true);
       const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
-      const data = await response.json();
+      const data: UserType = await response.json();
       setUser(data);
     } catch (error) {
       console.error('Error fetching user details:', error);
@@ -53,7 +86,9 @@ const UserDetailsPage = ({ userId, users, darkMode, navigateTo }) => {
     <div>
       <button
         onClick={() => navigateTo('home')}
-        className={`mb-6 flex items-center gap-2 ${darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}
+        className={`mb-6 flex items-center gap-2 ${
+          darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+        } transition-colors`}
       >
         <ArrowLeft size={20} /> Back to Users
       </button>
@@ -99,12 +134,15 @@ const UserDetailsPage = ({ userId, users, darkMode, navigateTo }) => {
             </h3>
             <div className="space-y-2">
               <p className={darkMode ? 'text-gray-300' : 'text-gray-700'}>
-                <span className="font-medium">Name:</span> {user.company?.name || user.company}
+                <span className="font-medium">Name:</span>{' '}
+                {typeof user.company === 'string' ? user.company : user.company?.name}
               </p>
-              {user.company?.catchPhrase && (
-                <p className={`text-sm italic ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{user.company.catchPhrase}</p>
+              {typeof user.company !== 'string' && user.company?.catchPhrase && (
+                <p className={`text-sm italic ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {user.company.catchPhrase}
+                </p>
               )}
-              {user.company?.bs && (
+              {typeof user.company !== 'string' && user.company?.bs && (
                 <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{user.company.bs}</p>
               )}
             </div>
